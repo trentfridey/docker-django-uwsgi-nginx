@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    restart: always
+    volumes:
+      - uwsgi_socket:/var/run/uwsgi:rw
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+    networks:
+      - my-network
+
+  nginx:
+    container_name: nginx
+    hostname: nginx
+    build:
+      context: ./nginx
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - uwsgi_socket:/var/run/uwsgi:rw
+    networks:
+      - my-network
+    depends_on:
+      - web
+
+networks:
+  my-network:
+    # docker stack/swarm only works with an overlay network
+    driver: overlay
+    name: 'my-network'
+    attachable: true
+
+# Docker Volumes
+volumes:
+  uwsgi_socket:
+    name: 'uwsgi_socket'

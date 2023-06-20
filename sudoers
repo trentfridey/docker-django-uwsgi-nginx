@@ -1,0 +1,14 @@
+# Allow www-data user to start supervisord without any password:
+www-data ALL=(root) NOPASSWD: /usr/local/bin/supervisord *
+
+# Allow www-data to take ownership of web directory files (for bind mounts in development)
+www-data ALL=(root) NOPASSWD: /usr/bin/chown -R www-data\:www-data /opt/myapp
+www-data ALL=(root) NOPASSWD: /usr/bin/chmod g+s /opt/myapp
+
+# Allow www-data to set file access lists
+www-data ALL=(root) NOPASSWD: /usr/bin/setfacl *
+
+# Allow www-data to assume any role (including as root) and execute any command
+# This itself negates all of the preceding rules for www-data but we want to eventually remove this and be explicit,
+# so keep the above rules so that we can remove this when it is no longer required
+www-data ALL=(ALL) NOPASSWD: ALL
